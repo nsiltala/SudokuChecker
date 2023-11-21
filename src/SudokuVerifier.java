@@ -13,13 +13,29 @@ public class SudokuVerifier {
 		int sudokuRowSize = 0;
 		int sudokuColumnSize = 0;
 		
-		if (!lengthChecker(candidateSolution)) {
+		if (!lengthChecker(candidateSolution.replaceAll("-", ""))) {
+			// System.out.println(candidateSolution.length()); // Testing line
 			return -1;
 		} else {
 			arrayChars = candidateSolution.toCharArray();
+			boolean isNeg = false;
 			for (int loop = 0; loop < arrayChars.length; loop++) {
 				try {
+					if (arrayChars[loop] == '-') {
+						if (isNeg || loop == arrayChars.length - 1) {
+							return -1;
+						}
+						isNeg = true;
+						continue;
+					}
+					
 					int number = Integer.parseInt("" + arrayChars[loop]);
+					
+					if(isNeg) {
+						number = -number;
+						isNeg = false;
+					}
+					
 					if (number > 0 && number <= 9) {
 						if (loop > 0 && loop % 9 == 0) {
 							sudokuColumnSize = 0;
@@ -43,6 +59,21 @@ public class SudokuVerifier {
 	//checks whether if any of the rules are broken (columns, rows, sub-grids).
 	private int sudokuRuleChecker(int[][] sudoku) {
 		int result = 0;
+		
+		/* Testing snippet
+		 * 
+		 * String ogString = "";
+		for (int i = 0; i < sudoku.length; i++) {
+			for (int j = 0; j < sudoku[i].length; j++) {
+				ogString += sudoku[i][j];
+			}
+		}
+		
+		System.out.println(ogString);
+		
+		if (!lengthChecker(ogString)) {
+			return -1;
+		} */
 
 		for (int i = 0; i < ROW_LENGTH; i += 3) {
 			for (int j = 0; j < ROW_LENGTH; j += 3) {
@@ -108,7 +139,7 @@ public class SudokuVerifier {
 		if (stringToCheck.length() == LENGTH) {
 			result = true;
 		}
-				return result;
+		return result;
 	}
 
 public static void main(String[] args) {
